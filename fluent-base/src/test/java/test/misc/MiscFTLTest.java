@@ -24,6 +24,7 @@
 
 package test.misc;
 
+import fluent.bundle.FluentBundle;
 import fluent.bundle.FluentResource;
 import fluent.syntax.parser.FTLParser;
 import org.junit.jupiter.api.Test;
@@ -46,39 +47,49 @@ public class MiscFTLTest {
 
     @Test
     public void attributeEarlyEOF_noEquals() {
-        // missing '=' at EOF
+        // A line starting with '.' but without '=' is treated as plain continuation text,
+        // not as the start of an attribute.
         final String in = """
                 message = Message pattern.
                         .attrib""";
 
         final FluentResource resource = parse( in );
-        assertEquals( 1, resource.errors().size() );
-        assertTrue( FTLTestUtils.matchParseException( resource, E0003, 0 ) );
+        final FluentBundle bundle = FTLTestUtils.basicBundleSetup( resource, false );
+
+        assertEquals( 0, resource.errors().size() );
+        assertEquals( 1, resource.entries().size() );
+        assertEquals( "Message pattern.\n.attrib", FTLTestUtils.fmt( bundle, "message" ) );
     }
 
     @Test
     public void attributeEarlyEOF_noID1() {
-        // fails after dot, which is EOF (but also is line 2)
+        // A lone '.' continuation line is also plain text, not an invalid attribute.
         final String in = """
                 message = Message pattern.
                         .""";
 
         final FluentResource resource = parse( in );
-        assertEquals( 1, resource.errors().size() );
-        assertTrue( FTLTestUtils.matchParseException( resource, E0004, 0 ) );
+        final FluentBundle bundle = FTLTestUtils.basicBundleSetup( resource, false );
+
+        assertEquals( 0, resource.errors().size() );
+        assertEquals( 1, resource.entries().size() );
+        assertEquals( "Message pattern.\n.", FTLTestUtils.fmt( bundle, "message" ) );
     }
 
     @Test
     public void attributeEarlyEOF_noID2() {
-        // also fails, but instead of EOF, gives line 2 (where dot is)
+        // Same behavior when the file continues with a trailing newline.
         final String in = """
                 message = Message pattern.
                         .
                 """;
 
         final FluentResource resource = parse( in );
-        assertEquals( 1, resource.errors().size() );
-        assertTrue( FTLTestUtils.matchParseException( resource, E0004, 2 ) );
+        final FluentBundle bundle = FTLTestUtils.basicBundleSetup( resource, false );
+
+        assertEquals( 0, resource.errors().size() );
+        assertEquals( 1, resource.entries().size() );
+        assertEquals( "Message pattern.\n.", FTLTestUtils.fmt( bundle, "message" ) );
     }
 
     @Test

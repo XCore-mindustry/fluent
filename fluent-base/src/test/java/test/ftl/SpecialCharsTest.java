@@ -49,10 +49,7 @@ public class SpecialCharsTest {
 
     @Test
     public void verifyExceptions() {
-        assertEquals( 3, resource.errors().size() );
-        assertTrue( FTLTestUtils.matchParseException( resource, E0005, 9 ) );
-        assertTrue( FTLTestUtils.matchParseException( resource, E0003, 12 ) );
-        assertTrue( FTLTestUtils.matchParseException( resource, E0005, 13 ) );
+        assertEquals( 0, resource.errors().size() );
     }
 
     @Test
@@ -63,6 +60,14 @@ public class SpecialCharsTest {
         );
 
 
+    }
+
+    @Test
+    public void bracketColorInline() {
+        assertEquals(
+                "[accent]Value!",
+                FTLTestUtils.fmt( bundle, "bracket-color-inline" )
+        );
     }
 
 
@@ -82,5 +87,37 @@ public class SpecialCharsTest {
                 FTLTestUtils.fmt( bundle, "star-inline" )
         );
 
+    }
+
+    @Test
+    public void bracketNewline() {
+        assertEquals(
+                "[Value]",
+                FTLTestUtils.fmt( bundle, "bracket-newline" )
+        );
+    }
+
+    @Test
+    public void bracketColorNewline() {
+        assertEquals(
+                "[accent]Value!",
+                FTLTestUtils.fmt( bundle, "bracket-color-newline" )
+        );
+    }
+
+    @Test
+    public void dotNewline() {
+        assertEquals(
+                ".Value",
+                FTLTestUtils.fmt( bundle, "dot-newline" )
+        );
+    }
+
+    @Test
+    public void starNewline() {
+        assertEquals(
+                "*Value",
+                FTLTestUtils.fmt( bundle, "star-newline" )
+        );
     }
 }

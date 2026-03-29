@@ -344,7 +344,7 @@ public class FTLParser {
         ps.expectChar( (byte) '=' );
 
         // remember, pattern can be empty (null) ... if an attribute is present.
-        final Pattern pattern = FTLPatternParser.getPattern( ps );
+        final Pattern pattern = FTLPatternParser.getPattern( ps, FTLPatternParser.PatternBoundary.MESSAGE_OR_TERM );
 
         ps.skipBlankBlockNLC();
 
@@ -372,7 +372,7 @@ public class FTLParser {
         ps.expectChar( (byte) '=' );
         ps.skipBlankInline();
 
-        final Pattern pattern = FTLPatternParser.getPattern( ps );
+        final Pattern pattern = FTLPatternParser.getPattern( ps, FTLPatternParser.PatternBoundary.MESSAGE_OR_TERM );
         ps.skipBlankBlockNLC();
 
         final List<Attribute> attributes = getAttributes( ps );
@@ -416,7 +416,7 @@ public class FTLParser {
         final Identifier id = getIdentifier( ps );
         ps.skipBlankInline();
         ps.expectChar( (byte) '=' );
-        final Pattern pattern = FTLPatternParser.getPattern( ps );
+        final Pattern pattern = FTLPatternParser.getPattern( ps, FTLPatternParser.PatternBoundary.ATTRIBUTE );
 
         if (pattern == null) {
             // Attributes must have a Pattern.
@@ -500,7 +500,7 @@ public class FTLParser {
             }
 
             final VariantKey key = getVariantKey( ps );
-            final Pattern value = FTLPatternParser.getPattern( ps );
+            final Pattern value = FTLPatternParser.getPattern( ps, FTLPatternParser.PatternBoundary.VARIANT_VALUE );
             if (value == null) {
                 throw parseException( ErrorCode.E0012, ps );
             }

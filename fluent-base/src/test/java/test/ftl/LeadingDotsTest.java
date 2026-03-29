@@ -51,12 +51,7 @@ public class LeadingDotsTest {
 
     @Test
     public void verifyExceptions() {
-        assertEquals( 6, resource.errors().size() );
-        assertTrue( FTLTestUtils.matchParseException( resource, E0003, 16 ) );
-        assertTrue( FTLTestUtils.matchParseException( resource, E0003, 20 ) );
-        assertTrue( FTLTestUtils.matchParseException( resource, E0003, 24 ) );
-        assertTrue( FTLTestUtils.matchParseException( resource, E0012, 57 ) );
-        assertTrue( FTLTestUtils.matchParseException( resource, E0003, 64 ) );
+        assertEquals( 1, resource.errors().size() );
         assertTrue( FTLTestUtils.matchParseException( resource, E0003, 69 ) );
     }
 
@@ -109,6 +104,30 @@ public class LeadingDotsTest {
     }
 
     @Test
+    public void key07() {
+        assertEquals(
+                "Value\n.Continued",
+                FTLTestUtils.fmt( bundle, "key07" )
+        );
+    }
+
+    @Test
+    public void key08() {
+        assertEquals(
+                ".Value",
+                FTLTestUtils.fmt( bundle, "key08" )
+        );
+    }
+
+    @Test
+    public void key09() {
+        assertEquals(
+                ".Value\nContinued",
+                FTLTestUtils.fmt( bundle, "key09" )
+        );
+    }
+
+    @Test
     public void key10() {
         assertEquals(
                 "which is an attribute\nContinued",
@@ -153,6 +172,22 @@ public class LeadingDotsTest {
         assertEquals(
                 ".Value",
                 FTLTestUtils.fmt( bundle, "key15" )
+        );
+    }
+
+    @Test
+    public void key16() {
+        assertEquals(
+                ".Value",
+                FTLTestUtils.fmt( bundle, "key16" )
+        );
+    }
+
+    @Test
+    public void key17() {
+        assertEquals(
+                "Value\n.Continued",
+                FTLTestUtils.fmt( bundle, "key17" )
         );
     }
 

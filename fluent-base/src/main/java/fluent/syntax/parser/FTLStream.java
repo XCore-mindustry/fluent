@@ -419,10 +419,6 @@ final class FTLStream {
         return CommonOps.isASCIIAlphabetic( at() );
     }
 
-    boolean isBytePatternContinuation() {
-        return !CommonOps.isLineStart( at() );
-    }
-
     boolean isNumberStart() {
         final byte b = at();
         return (b == '-' || CommonOps.isASCIIDigit( b ));

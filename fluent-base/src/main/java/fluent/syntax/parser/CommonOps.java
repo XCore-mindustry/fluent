@@ -18,12 +18,6 @@ final class CommonOps {
 
     private CommonOps() {}
 
-
-    ///  True if ASCII ('}','.','[', or '*').
-    static boolean isLineStart(final byte b) {
-        return (b == '}' || b == '.' || b == '[' || b == '*');
-    }
-
     ///  True if ASCII ('0-9').
     static boolean isASCIIDigit(final byte in) {
         // OLD: return (b >= 48 && b <= 57);  // 0-9

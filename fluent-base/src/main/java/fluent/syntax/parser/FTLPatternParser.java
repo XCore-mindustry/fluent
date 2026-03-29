@@ -41,10 +41,15 @@ final class FTLPatternParser {
 
     private FTLPatternParser() {}
 
+    enum PatternBoundary {
+        MESSAGE_OR_TERM,
+        ATTRIBUTE,
+        VARIANT_VALUE,
+    }
 
     // parse a pattern
     // NOTE: Profiling indicates that this method dominates parsing time (expectedly)
-    static @Nullable Pattern getPattern(final FTLStream ps) {
+    static @Nullable Pattern getPattern(final FTLStream ps, final PatternBoundary patternBoundary) {
         List<PEPlaceholder> elements = new ArrayList<>( 4 );
         int lastNonBlank = -1;
         int commonIndent = -1;
@@ -77,7 +82,7 @@ final class FTLPatternParser {
                     // fixed with isEOL() to take into account blank lines in UNIX or Windows style
                     if (!ps.hasRemaining() || (indent == 0 && !ps.isEOL())) {
                         break;
-                    } else if (!ps.isBytePatternContinuation()) {
+                    } else if (!isPatternContinuation( ps, patternBoundary )) {
                         ps.setPosition( sliceStart );    // rewind
                         break;
                     }
@@ -182,6 +187,46 @@ final class FTLPatternParser {
         }
 
         return null;
+    }
+
+    private static boolean isPatternContinuation(final FTLStream ps, final PatternBoundary patternBoundary) {
+        if (ps.isCurrentChar( (byte) '}' )) {
+            return false;
+        }
+
+        return switch (patternBoundary) {
+            case MESSAGE_OR_TERM -> !startsAttribute( ps );
+            case ATTRIBUTE -> !startsAttribute( ps );
+            case VARIANT_VALUE -> !startsVariant( ps );
+        };
+    }
+
+    private static boolean startsAttribute(final FTLStream ps) {
+        if (!ps.isCurrentChar( (byte) '.' )) {
+            return false;
+        }
+
+        final int idStart = ps.position() + 1;
+        if (idStart >= ps.length() || !CommonOps.isASCIIAlphabetic( ps.at( idStart ) )) {
+            return false;
+        }
+
+        int pos = ps.getIdentifierEnd( idStart );
+        while (pos < ps.length() && ps.at( pos ) == ' ') {
+            pos++;
+        }
+
+        return pos < ps.length() && ps.at( pos ) == '=';
+    }
+
+    private static boolean startsVariant(final FTLStream ps) {
+        if (ps.isCurrentChar( (byte) '[' )) {
+            return true;
+        }
+
+        return ps.isCurrentChar( (byte) '*' )
+                && ((ps.position() + 1) < ps.length())
+                && ps.at( ps.position() + 1 ) == '[';
     }
 
 
