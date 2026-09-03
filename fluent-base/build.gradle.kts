@@ -36,7 +36,8 @@ plugins {
     id("me.champeau.jmh") version "0.7.3"
 }
 
-version = "2.0.0-xcore"
+val baseVersion = "2.0.0-xcore"
+version = project.findProperty("xcorePublishVersion") as String? ?: baseVersion
 group = "net.xyzsd.fluent"
 
 repositories {
@@ -70,6 +71,14 @@ jmh {
 tasks.compileJava {
     options.encoding = "UTF-8"
     options.compilerArgs.add("-Xlint:all,-serial")
+}
+
+val versionProperty = objects.property(String::class.java).value(provider { project.version.toString() })
+tasks.register("getProjectVersion") {
+    notCompatibleWithConfigurationCache("Prints project version")
+    doLast {
+        println(versionProperty.get())
+    }
 }
 
 java {
