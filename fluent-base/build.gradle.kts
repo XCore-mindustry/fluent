@@ -25,6 +25,8 @@ import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.SourcesJar
 import com.github.spotbugs.snom.Confidence
 import com.github.spotbugs.snom.Effort
+import org.gradle.api.credentials.PasswordCredentials
+import org.gradle.authentication.http.BasicAuthentication
 
 plugins {
     id("com.vanniktech.maven.publish") version "0.36.0"
@@ -34,7 +36,7 @@ plugins {
     id("me.champeau.jmh") version "0.7.3"
 }
 
-version = "2.0"
+version = "2.0.0-xcore"
 group = "net.xyzsd.fluent"
 
 repositories {
@@ -79,7 +81,7 @@ java {
     // NOTE: the above may need to be re-verified with more recent versions
 
     toolchain {
-        languageVersion = JavaLanguageVersion.of(23)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -150,16 +152,50 @@ mavenPublishing {
 }
 
 
+publishing {
+    repositories {
+        val xcoreSnapshotsRepositoryUrl = project.findProperty("xcoreMavenSnapshotsUrl") as String? ?: "https://maven.x-core.org/snapshots"
+        val xcoreReleasesRepositoryUrl = project.findProperty("xcoreMavenReleasesUrl") as String? ?: "https://maven.x-core.org/releases"
+
+        maven {
+            name = "xcoreRepositorySnapshots"
+            url = uri(xcoreSnapshotsRepositoryUrl)
+            credentials(PasswordCredentials::class.java)
+            authentication {
+                create<BasicAuthentication>("basic")
+            }
+        }
+
+        maven {
+            name = "xcoreRepositoryReleases"
+            url = uri(xcoreReleasesRepositoryUrl)
+            credentials(PasswordCredentials::class.java)
+            authentication {
+                create<BasicAuthentication>("basic")
+            }
+        }
+    }
+}
+
 signing {
     val githubCI: Boolean = "true".equals(System.getenv("CI"))
-    if (githubCI) {
+    val hasSigningKey = System.getenv("SIGNING_KEY_PRIVATE") != null || project.hasProperty("signing.keyId")
+    isRequired = hasSigningKey
+
+    if (githubCI && hasSigningKey) {
         project.logger.lifecycle("Signing: Using Github CI environment.")
         val signingKey: String? = System.getenv("SIGNING_KEY_PRIVATE")
         val signingKeyPassphrase: String? = System.getenv("SIGNING_KEY_PASSPHRASE")
         useInMemoryPgpKeys(signingKey, signingKeyPassphrase)
-    } else {
+    } else if (hasSigningKey) {
         project.logger.lifecycle("Signing: Using local credentials.")
         useGpgCmd()
+    }
+}
+
+tasks.withType<Sign>().configureEach {
+    onlyIf {
+        System.getenv("SIGNING_KEY_PRIVATE") != null || project.hasProperty("signing.keyId")
     }
 }
 
