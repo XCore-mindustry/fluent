@@ -192,7 +192,7 @@ public final class FluentFunctionRegistry {
 
     // true if any custom formatters have been set
     private boolean hasCustoms() {
-        return !customExact.isEmpty() && !customList.isEmpty();
+        return !customExact.isEmpty() || !customList.isEmpty();
     }
 
     /// Select on a FluentValue

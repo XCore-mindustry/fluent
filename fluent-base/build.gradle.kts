@@ -36,7 +36,7 @@ plugins {
     id("me.champeau.jmh") version "0.7.3"
 }
 
-val baseVersion = "2.0.0-xcore"
+val baseVersion = "2.0.1-xcore"
 version = project.findProperty("xcorePublishVersion") as String? ?: baseVersion
 group = "net.xyzsd.fluent"
 
