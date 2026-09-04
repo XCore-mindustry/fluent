@@ -600,6 +600,9 @@ public class FTLParser {
 
 
     private static InlineExpression getInlineExpression(final FTLStream ps) {
+        if (!ps.hasRemaining()) {
+            throw parseException( ErrorCode.E0028, ps );
+        }
         final byte initialChar = ps.at();
         if (initialChar == '"') {
             ps.inc();

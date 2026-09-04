@@ -145,7 +145,7 @@ final class FTLStream {
 
     /// this method is not strictly needed
     boolean isCurrentChar(final byte b) {
-        return (at() == b);
+        return hasRemaining() && (seq[pos] == b);
     }
 
     /// peek at next byte (relative to current position); return true if matches.
@@ -416,10 +416,11 @@ final class FTLStream {
     }
 
     boolean isIdentifierStart() {
-        return CommonOps.isASCIIAlphabetic( at() );
+        return hasRemaining() && CommonOps.isASCIIAlphabetic( at() );
     }
 
     boolean isNumberStart() {
+        if (!hasRemaining()) return false;
         final byte b = at();
         return (b == '-' || CommonOps.isASCIIDigit( b ));
     }

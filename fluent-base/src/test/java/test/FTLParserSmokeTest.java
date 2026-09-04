@@ -810,4 +810,15 @@ class FTLParserSmokeTest {
 
     }
 
+    @Test
+    void truncatedPlaceablesAtEofTest() {
+        FluentResource res1 = FTLParser.parse("broken = {\n", FTLParser.ParseOptions.EXTENDED);
+        assertEquals(1, res1.errors().size());
+        assertEquals(1, res1.junk().size());
+
+        FluentResource res2 = FTLParser.parse("broken = { $foo\n", FTLParser.ParseOptions.EXTENDED);
+        assertEquals(1, res2.errors().size());
+        assertEquals(1, res2.junk().size());
+    }
+
 }
