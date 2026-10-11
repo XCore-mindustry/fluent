@@ -29,8 +29,8 @@ import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.authentication.http.BasicAuthentication
 
 plugins {
-    id("com.vanniktech.maven.publish") version "0.36.0"
-    id("com.github.spotbugs") version "6.5.5"
+    id("com.vanniktech.maven.publish") version "0.37.0"
+    id("com.github.spotbugs") version "6.5.12"
     id("signing")
     id("java-library")
     id("me.champeau.jmh") version "0.7.3"
@@ -50,12 +50,12 @@ tasks.test {
 }
 
 dependencies {
-    api("org.jspecify:jspecify:1.0.0")
-    implementation("com.ibm.icu:icu4j:78.1")
+    api("org.jspecify:jspecify:1.0.1")
+    implementation("com.ibm.icu:icu4j:78.3")
     //
-    testImplementation("org.junit.jupiter:junit-jupiter:5.14.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.14.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.14.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:6.1.3")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.1.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
