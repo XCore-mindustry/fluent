@@ -26,7 +26,7 @@ dependencies {
 
     // we need ICU for locale matching
     // (note: this is also a dependency of fluent-base)
-    implementation("com.ibm.icu:icu4j:78.1")
+    implementation("com.ibm.icu:icu4j:78.3")
 
 
 // TODO:    add this line and test. if above is not present, use maven dependency
